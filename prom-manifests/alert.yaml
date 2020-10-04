@@ -1,0 +1,66 @@
+Name:               alertmanager-prometheus-kube-prometheus-alertmanager
+Namespace:          default
+CreationTimestamp:  Sat, 03 Oct 2020 19:59:03 -0400
+Selector:           alertmanager=prometheus-kube-prometheus-alertmanager,app=alertmanager
+Labels:             app=kube-prometheus-stack-alertmanager
+                    chart=kube-prometheus-stack-9.4.6
+                    heritage=Tiller
+                    release=prometheus
+Annotations:        <none>
+Replicas:           1 desired | 1 total
+Update Strategy:    RollingUpdate
+Pods Status:        1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:           alertmanager=prometheus-kube-prometheus-alertmanager
+                    app=alertmanager
+  Service Account:  prometheus-kube-prometheus-alertmanager
+  Containers:
+   alertmanager:
+    Image:       quay.io/prometheus/alertmanager:v0.21.0
+    Ports:       9093/TCP, 9094/TCP, 9094/UDP
+    Host Ports:  0/TCP, 0/TCP, 0/UDP
+    Args:
+      --config.file=/etc/alertmanager/config/alertmanager.yaml
+      --cluster.listen-address=[$(POD_IP)]:9094
+      --storage.path=/alertmanager
+      --data.retention=120h
+      --web.listen-address=:9093
+      --web.external-url=http://prometheus-kube-prometheus-alertmanager.default:9093
+      --web.route-prefix=/
+      --cluster.peer=alertmanager-prometheus-kube-prometheus-alertmanager-0.alertmanager-operated.default.svc:9094
+    Requests:
+      memory:   200Mi
+    Liveness:   http-get http://:web/-/healthy delay=0s timeout=3s period=10s #success=1 #failure=10
+    Readiness:  http-get http://:web/-/ready delay=3s timeout=3s period=5s #success=1 #failure=10
+    Environment:
+      POD_IP:   (v1:status.podIP)
+    Mounts:
+      /alertmanager from alertmanager-prometheus-kube-prometheus-alertmanager-db (rw)
+      /etc/alertmanager/config from config-volume (rw)
+   config-reloader:
+    Image:      docker.io/jimmidyson/configmap-reload:v0.3.0
+    Port:       <none>
+    Host Port:  <none>
+    Args:
+      -webhook-url=http://127.0.0.1:9093/-/reload
+      -volume-dir=/etc/alertmanager/config
+    Limits:
+      cpu:        100m
+      memory:     25Mi
+    Environment:  <none>
+    Mounts:
+      /etc/alertmanager/config from config-volume (ro)
+  Volumes:
+   config-volume:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  alertmanager-prometheus-kube-prometheus-alertmanager
+    Optional:    false
+   alertmanager-prometheus-kube-prometheus-alertmanager-db:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+Volume Claims:  <none>
+Events:
+  Type    Reason            Age   From                    Message
+  ----    ------            ----  ----                    -------
+  Normal  SuccessfulCreate  23m   statefulset-controller  create Pod alertmanager-prometheus-kube-prometheus-alertmanager-0 in StatefulSet alertmanager-prometheus-kube-prometheus-alertmanager successful

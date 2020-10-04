@@ -1,0 +1,65 @@
+Name:                   prometheus-kube-prometheus-operator
+Namespace:              default
+CreationTimestamp:      Sat, 03 Oct 2020 19:58:56 -0400
+Labels:                 app=kube-prometheus-stack-operator
+                        chart=kube-prometheus-stack-9.4.6
+                        heritage=Tiller
+                        release=prometheus
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=kube-prometheus-stack-operator,release=prometheus
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:           app=kube-prometheus-stack-operator
+                    chart=kube-prometheus-stack-9.4.6
+                    heritage=Tiller
+                    release=prometheus
+  Service Account:  prometheus-kube-prometheus-operator
+  Containers:
+   kube-prometheus-stack:
+    Image:      quay.io/coreos/prometheus-operator:v0.38.1
+    Port:       8080/TCP
+    Host Port:  0/TCP
+    Args:
+      --manage-crds=true
+      --kubelet-service=kube-system/prometheus-kube-prometheus-kubelet
+      --logtostderr=true
+      --localhost=127.0.0.1
+      --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:v0.38.1
+      --config-reloader-image=docker.io/jimmidyson/configmap-reload:v0.3.0
+      --config-reloader-cpu=100m
+      --config-reloader-memory=25Mi
+    Environment:  <none>
+    Mounts:       <none>
+   tls-proxy:
+    Image:      squareup/ghostunnel:v1.5.2
+    Port:       8443/TCP
+    Host Port:  0/TCP
+    Args:
+      server
+      --listen=:8443
+      --target=127.0.0.1:8080
+      --key=cert/key
+      --cert=cert/cert
+      --disable-authentication
+    Environment:  <none>
+    Mounts:
+      /cert from tls-proxy-secret (ro)
+  Volumes:
+   tls-proxy-secret:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  prometheus-kube-prometheus-admission
+    Optional:    false
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   prometheus-kube-prometheus-operator-7f5947767f (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  24m   deployment-controller  Scaled up replica set prometheus-kube-prometheus-operator-7f5947767f to 1
