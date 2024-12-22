@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-gman-go-server
+  labels:
+    app: {{ .Release.Name }}-gman-go-server
+  annotations:
+    prometheus.io/scrape: {{ quote .Values.promScrape.scrape }}
+    prometheus.io/path: {{ quote .Values.promScrape.path }}
+    prometheus.io/port: {{ quote .Values.promScrape.port }}
+spec:
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: web
+  selector:
+    app: {{ .Release.Name }}-gman-go-server
+---
+{{ if eq .Values.svcMon true }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-gman-go-server
+  labels:
+    app: {{ .Release.Name }}-gman-go-server
+spec:
+  endpoints:
+  - port: web
+    path: "/metrics"
+    interval: 30s
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-gman-go-server
+{{ end }}

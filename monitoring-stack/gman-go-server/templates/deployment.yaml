@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-gman-go-server
+  labels:
+    app: {{ .Release.Name }}-gman-go-server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-gman-go-server
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: {{ quote .Values.promScrape.scrape }}
+        prometheus.io/path: {{ quote .Values.promScrape.path }}
+        prometheus.io/port: {{ quote .Values.promScrape.port }}
+      labels:
+        app: {{ .Release.Name }}-gman-go-server
+    spec:
+      containers:
+        - name: gman-go-server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            {{- toYaml .Values.env | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+---
+{{ if eq .Values.podMon true }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Release.Name }}-gman-go-server
+  labels:
+    app: {{ .Release.Name }}-gman-go-server
+spec:
+  podMetricsEndpoints:
+    - path: "/metrics"
+      port: "2112"
+      interval: 30s
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-gman-go-server
+{{ end }}
