@@ -4,6 +4,8 @@ test_pod:
   pullPolicy: IfNotPresent
 
 loki:
+  image: 
+    tag: 2.9.3
   enabled: true
   isDefault: true
   url: http://{{(include "loki.serviceName" .)}}:{{ .Values.loki.service.port }}
@@ -21,7 +23,6 @@ loki:
     jsonData: "{}"
     uid: ""
 
-
 promtail:
   enabled: true
   config:
@@ -29,6 +30,22 @@ promtail:
     serverPort: 3101
     clients:
       - url: http://{{ .Release.Name }}:3100/loki/api/v1/push
+    scrape_configs:
+      - job_name: kubernetes-pods
+        pipeline_stages:
+          - docker: {}
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - gman-go-server
+        relabel_configs:
+          - action: replace
+            source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_name]
+            target_label: kubernetes_pod_name
 
 fluent-bit:
   enabled: false
