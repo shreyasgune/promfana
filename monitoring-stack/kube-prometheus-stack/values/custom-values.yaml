@@ -1,0 +1,34 @@
+# Example custom values.yaml for kube-prometheus-stack
+prometheus:
+  enabled: true
+  replicas: 2
+  namespace: monitoring
+  serviceMonitorSelector: {} #match all svc monitors
+  podMonitorSelector: {} #match all pod monitors
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+grafana:
+  enabled: true
+  adminPassword: "admin"  # Set your desired password here
+  additionalDatasources:
+    - name: Loki
+      type: loki
+      url:  http://loki.logging.svc.cluster.local:3100
+      access: proxy
+      isDefault: true 
+
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    replicas: 2
+
+loki:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
