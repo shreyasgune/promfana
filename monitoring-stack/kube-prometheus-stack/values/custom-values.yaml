@@ -1,7 +1,13 @@
 # Example custom values.yaml for kube-prometheus-stack
 prometheus:
+  service:
+    type: LoadBalancer
   enabled: true
-  replicas: 2
+  thanosService:
+    enabled: true
+  thanosServiceMonitor:
+    enabled: true
+  replicas: 1
   namespace: monitoring
   serviceMonitorSelector: {} #match all svc monitors
   podMonitorSelector: {} #match all pod monitors
@@ -10,6 +16,9 @@ prometheus:
     podMonitorSelectorNilUsesHelmValues: false
 
 grafana:
+  service:
+    enabled: true
+    type: LoadBalancer
   enabled: true
   adminPassword: "admin"  # Set your desired password here
   additionalDatasources:
@@ -22,11 +31,12 @@ grafana:
 
 alertmanager:
   enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer
   alertmanagerSpec:
-    replicas: 2
+    replicas: 1
 
-loki:
-  enabled: false
 
 kubeScheduler:
   enabled: false

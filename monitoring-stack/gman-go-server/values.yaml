@@ -56,4 +56,4 @@ promScrape:
   port: "2112"
 
 podMon: false
-svcMon: true
+svcMon: false

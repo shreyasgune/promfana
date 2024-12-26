@@ -9,6 +9,7 @@ metadata:
     prometheus.io/path: {{ quote .Values.promScrape.path }}
     prometheus.io/port: {{ quote .Values.promScrape.port }}
 spec:
+  type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
