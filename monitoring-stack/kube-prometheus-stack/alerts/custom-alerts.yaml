@@ -1,0 +1,80 @@
+groups:
+  - name: person_api_alerts
+    rules:
+      # Recording Rule: Average Request Duration per Method
+      - record: person_api_request_duration_seconds_avg
+        expr: person_api_request_duration_seconds_sum / person_api_request_duration_seconds_count
+        labels:
+          method: "all_methods" # You can aggregate across all methods or keep it per method if you wish
+
+      # Alert: High request duration for GET /people/get
+      - alert: HighRequestDurationGET
+        expr: person_api_request_duration_seconds_avg{method="/people/get"} > 0.5
+        for: 1m
+        annotations:
+          summary: "High request duration for GET /people/get"
+          description: "The average request duration for GET /people/get is greater than 0.5 seconds."
+
+      # Alert: High request duration for POST /people/create
+      - alert: HighRequestDurationPOST
+        expr: person_api_request_duration_seconds_avg{method="/people/create"} > 0.5
+        for: 1m
+        annotations:
+          summary: "High request duration for POST /people/create"
+          description: "The average request duration for POST /people/create is greater than 0.5 seconds."
+
+      # Alert: High request duration for PUT /people/update
+      - alert: HighRequestDurationPUT
+        expr: person_api_request_duration_seconds_avg{method="/people/update"} > 0.5
+        for: 1m
+        annotations:
+          summary: "High request duration for PUT /people/update"
+          description: "The average request duration for PUT /people/update is greater than 0.5 seconds."
+
+      # Alert: High error rate (if error rate exceeds 0.1 per minute)
+      - alert: HighErrorRate
+        expr: rate(person_api_errors_total[5m]) > 0.1
+        for: 1m
+        annotations:
+          summary: "High error rate detected in person API"
+          description: "The error rate for the API is higher than 0.1 errors per minute."
+
+      # Alert: Low number of people in database (threshold 10)
+      - alert: LowPeopleInDatabase
+        expr: person_api_people_total < 10
+        for: 1m
+        annotations:
+          summary: "Low number of people in database"
+          description: "The current number of people in the database is less than 10."
+
+      # Alert: High request count for POST /people/create (over 5 requests per minute)
+      - alert: HighRequestCountPOST
+        expr: rate(person_api_requests_total{method="POST"}[5m]) > 5
+        for: 1m
+        annotations:
+          summary: "High request count for POST /people/create"
+          description: "The number of POST requests to /people/create is greater than 5 per minute."
+
+      # Alert: High request count for GET /people/get (over 5 requests per minute)
+      - alert: HighRequestCountGET
+        expr: rate(person_api_requests_total{method="GET"}[5m]) > 5
+        for: 1m
+        annotations:
+          summary: "High request count for GET /people/get"
+          description: "The number of GET requests to /people/get is greater than 5 per minute."
+
+      # Alert: High request count for PUT /people/update (over 5 requests per minute)
+      - alert: HighRequestCountPUT
+        expr: rate(person_api_requests_total{method="PUT"}[5m]) > 5
+        for: 1m
+        annotations:
+          summary: "High request count for PUT /people/update"
+          description: "The number of PUT requests to /people/update is greater than 5 per minute."
+
+      # Alert: Low processed operations (threshold 100)
+      - alert: LowProcessedOps
+        expr: person_api_server_processed_ops_total < 100
+        for: 1m
+        annotations:
+          summary: "Low number of processed operations"
+          description: "The number of processed operations is less than 100."

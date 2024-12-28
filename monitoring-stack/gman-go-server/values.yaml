@@ -7,7 +7,7 @@
 replicaCount: 1
 image:
   repository: shreyasgune/gman-go-server
-  tag: 0.0.2
+  tag: 0.0.3
   pullPolicy: IfNotPresent
 
 service:
