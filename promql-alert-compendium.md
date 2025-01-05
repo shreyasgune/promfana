@@ -4,67 +4,6 @@ Some of the Queries and Alerts that I think, we should be implementing.
 
 ---
 
-## SLO for Error Rate using Recording Rules
-
-- My Successful requests SLO is 99.9%
-- Which means: I want my error rate to be less than 0.1%
-- Error Budget = (100% - SLO%) × Time Period ==
-    - Week: `0.1% × 168 hours = 0.001 × 168 hours = 0.168 hours = 10.08 minutes`
-    - Month: `0.1% × 720 hours = 0.001 × 720 hours = 0.72 hours = 43.2 minutes`
-    - Quarter: `0.1% × 2160 hours = 0.001 × 2160 hours = 2.16 hours = 129.6 minutes`
-    - Year: `0.1% × 8760 hours = 0.001 × 8760 hours = 8.76 hours = 525.6 minutes`
-    - Whch means: I want to alert if `error_rate is > 0.1 for [10m]`
-    ```yaml
-    alert: HighErrorSLO
-    expression: job:slo_error_per_request:ratio_rate10m{job="my-job"} >= 0.1
-
-    # Recording Rule (for the expression above):
-
-    sum by (job) (rate(http_requests_total{status=~"4..|5.."}[10m]))
-    /
-    sum by (job) (rate(http_requests_total[10m]))
-    ```
-
-    Recording Rule YAML
-    ```yaml
-        groups:
-      - name: error-rate-rules
-        interval: 10m  # Evaluates every 10 minutes
-        rules:
-          - record: job:error_rate:ratio
-            expr: |
-              sum by (job) (rate(http_requests_total{status=~"4..|5.."}[10m])) /
-              sum by (job) (rate(http_requests_total[10m]))
-            labels:
-              error_type: "total_4xx_and_5xx"
-    ``` 
-    Associated Alert YAML
-
-    ```yaml
-    alert: HighErrorRate
-    expr: job:error_rate:ratio > 0.001  # 0.1% error rate (threshold based on SLO)
-    for: 1m
-    labels:
-      severity: critical
-    annotations:
-      summary: "High error rate for job {{ $labels.job }}"
-      description: "The error rate for job {{ $labels.job }} has exceeded 0.1% in the last 10 minutes."
-    ```
-
-    Prom Config:
-
-    ```yaml
-    rule_files:
-      - "error_rate_rules.yml"  # Path to your rule files containing the recording and alerting rules
-
-    scrape_configs:
-      - job_name: 'your_job'
-        static_configs:
-          - targets: ['localhost:8080']
-        metrics_path: '/metrics'
-    ```
-
-
 ## Alerting Metrics: 
 Metrics that trigger alerts based on thresholds, trends, or anomalies. These are critical for proactively identifying issues in your infrastructure, applications, or services.
 
@@ -194,8 +133,6 @@ annotations:
 
 
 ---
----
-
 
 ## Debugging Metrics: 
 Metrics that provide detailed information to investigate the root cause of issues when they occur. These metrics help understand the context and diagnose problems.
@@ -255,3 +192,64 @@ annotations:
 
 ```
 
+---
+
+## SLO for Error Rate using Recording Rules
+
+- My Successful requests SLO is 99.9%
+- Which means: I want my error rate to be less than 0.1%
+- Error Budget = (100% - SLO%) × Time Period ==
+    - Week: `0.1% × 168 hours = 0.001 × 168 hours = 0.168 hours = 10.08 minutes`
+    - Month: `0.1% × 720 hours = 0.001 × 720 hours = 0.72 hours = 43.2 minutes`
+    - Quarter: `0.1% × 2160 hours = 0.001 × 2160 hours = 2.16 hours = 129.6 minutes`
+    - Year: `0.1% × 8760 hours = 0.001 × 8760 hours = 8.76 hours = 525.6 minutes`
+    - Whch means: I want to alert if `error_rate is > 0.1 for [10m]`
+    ```yaml
+    alert: HighErrorSLO
+    expression: job:slo_error_per_request:ratio_rate10m{job="my-job"} >= 0.1
+
+    # Recording Rule (for the expression above):
+
+    sum by (job) (rate(http_requests_total{status=~"4..|5.."}[10m]))
+    /
+    sum by (job) (rate(http_requests_total[10m]))
+    ```
+
+    Recording Rule YAML
+    ```yaml
+        groups:
+      - name: error-rate-rules
+        interval: 10m  # Evaluates every 10 minutes
+        rules:
+          - record: job:error_rate:ratio
+            expr: |
+              sum by (job) (rate(http_requests_total{status=~"4..|5.."}[10m])) /
+              sum by (job) (rate(http_requests_total[10m]))
+            labels:
+              error_type: "total_4xx_and_5xx"
+    ``` 
+    Associated Alert YAML
+
+    ```yaml
+    alert: HighErrorRate
+    expr: job:error_rate:ratio > 0.001  # 0.1% error rate (threshold based on SLO)
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High error rate for job {{ $labels.job }}"
+      description: "The error rate for job {{ $labels.job }} has exceeded 0.1% in the last 10 minutes."
+    ```
+
+    Prom Config:
+
+    ```yaml
+    rule_files:
+      - "error_rate_rules.yml"  # Path to your rule files containing the recording and alerting rules
+
+    scrape_configs:
+      - job_name: 'your_job'
+        static_configs:
+          - targets: ['localhost:8080']
+        metrics_path: '/metrics'
+    ```
