@@ -26,11 +26,13 @@ helm plugin install https://github.com/databus23/helm-diff
 
 helm create gman-go-server
 
+kubectl create ns gman-go-server
+
 helm install --dry-run --debug --namespace gman-go-server sgune-server ./gman-go-server  # dry run
 
-helm upgrade --cleanup-on-fail --namespace gman-go-server --install sgune-server ./gman-go-server
+helm upgrade --install --cleanup-on-fail --namespace gman-go-server sgune-server -f gman-go-server/values/gke.yaml  ./gman-go-server
 
-helm diff upgrade sgune-server --namespace gman-go-server ./gman-go-server -C3
+helm diff upgrade --namespace gman-go-server sgune-server -f gman-go-server/values/gke.yaml  ./gman-go-server -C3
 
 #NOTES
 Get the application URL by running these commands: 
