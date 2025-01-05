@@ -142,7 +142,9 @@ curl --location 'http://localhost:8000/metrics'
 ```
 
 
-# PROMQL Examples
+# Query Examples
+
+### PROMQL Examples
 - `delta(process_cpu_usage[5m])`
 
 Explanation: This query calculates the change (delta) in the process_cpu_usage metric over the last 5 minutes. It helps to measure the CPU usage variation over time for a given process.
@@ -191,3 +193,4 @@ Explanation: This calculates the rate of change (derivative) of the process_resi
 - `topk(5, rate(http_request_total[2h]))`
 
 Explanation: This query finds the top 5 metrics based on the rate of HTTP requests over the last 2 hours. It's useful for identifying the most active HTTP request sources.
+
