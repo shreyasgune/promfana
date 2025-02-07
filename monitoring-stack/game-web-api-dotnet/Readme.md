@@ -597,3 +597,255 @@ Get the application URL by running these commands:
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace dotnet-game-api port-forward $POD_NAME 8080:$CONTAINER_PORT
 ```
+
+## Kubernetes Infrastructure using Terragrunt
+```
+export GOOGLE_APPLICATION_CREDENTIALS=/home/sgune/devs/gke-sa.json
+
+cd /home/sgune/devs/promfana/monitoring-stack/game-web-api-dotnet/kube-infra/development/us-central1
+```
+
+<details>
+<summary> terragrunt plan </summary>
+
+```
+ terragrunt plan
+WARN[0000] No double-slash (//) found in source URL /home/sgune/devs/promfana/monitoring-stack/game-web-api-dotnet/kube-infra/modules. Relative paths in downloaded Terraform code may not work.
+
+Initializing the backend...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing provider plugins...
+- Finding hashicorp/google versions matching "~> 4.0"...
+- Installing hashicorp/google v4.85.0...
+- Installed hashicorp/google v4.85.0 (signed by HashiCorp)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+google_project_service.compute: Refreshing state... [id=angelic-digit-297517/compute.googleapis.com]
+google_project_service.container: Refreshing state... [id=angelic-digit-297517/container.googleapis.com]
+google_compute_address.nat: Refreshing state... [id=projects/angelic-digit-297517/regions/us-central1/addresses/nat]
+google_compute_network.main: Refreshing state... [id=projects/angelic-digit-297517/global/networks/us-central1-main]
+google_compute_router.router: Refreshing state... [id=projects/angelic-digit-297517/regions/us-central1/routers/us-central1-router]
+google_compute_subnetwork.private: Refreshing state... [id=projects/angelic-digit-297517/regions/us-central1/subnetworks/us-central1-private]
+google_compute_firewall.allow-ssh: Refreshing state... [id=projects/angelic-digit-297517/global/firewalls/us-central1-allow-ssh]
+google_container_cluster.primary: Refreshing state... [id=projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster]
+google_compute_router_nat.nat: Refreshing state... [id=angelic-digit-297517/us-central1/us-central1-router/us-central1-nat]
+google_container_node_pool.general: Refreshing state... [id=projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster/nodePools/us-central1-general]
+google_container_node_pool.spot: Refreshing state... [id=projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster/nodePools/us-central1-spot]
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # google_container_cluster.primary has been deleted
+  - resource "google_container_cluster" "primary" {
+      - id                          = "projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster" -> null
+        name                        = "us-central1-dev-cluster"
+        # (26 unchanged attributes hidden)
+
+        # (17 unchanged blocks hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_container_cluster.primary will be created
+  + resource "google_container_cluster" "primary" {
+      + cluster_ipv4_cidr           = (known after apply)
+      + datapath_provider           = (known after apply)
+      + default_max_pods_per_node   = (known after apply)
+      + enable_binary_authorization = false
+      + enable_intranode_visibility = (known after apply)
+      + enable_kubernetes_alpha     = false
+      + enable_l4_ilb_subsetting    = false
+      + enable_legacy_abac          = false
+      + enable_shielded_nodes       = true
+      + endpoint                    = (known after apply)
+      + id                          = (known after apply)
+      + initial_node_count          = 2
+      + label_fingerprint           = (known after apply)
+      + location                    = "us-central1"
+      + logging_service             = "logging.googleapis.com/kubernetes"
+      + master_version              = (known after apply)
+      + monitoring_service          = "monitoring.googleapis.com/kubernetes"
+      + name                        = "us-central1-dev-cluster"
+      + network                     = "https://www.googleapis.com/compute/v1/projects/angelic-digit-297517/global/networks/us-central1-main"
+      + networking_mode             = "VPC_NATIVE"
+      + node_locations              = [
+          + "us-central1-b",
+        ]
+      + node_version                = (known after apply)
+      + operation                   = (known after apply)
+      + private_ipv6_google_access  = (known after apply)
+      + project                     = (known after apply)
+      + remove_default_node_pool    = true
+      + self_link                   = (known after apply)
+      + services_ipv4_cidr          = (known after apply)
+      + subnetwork                  = "https://www.googleapis.com/compute/v1/projects/angelic-digit-297517/regions/us-central1/subnetworks/us-central1-private"
+      + tpu_ipv4_cidr_block         = (known after apply)
+
+      + addons_config {
+          + horizontal_pod_autoscaling {
+              + disabled = false
+            }
+          + http_load_balancing {
+              + disabled = true
+            }
+        }
+
+      + ip_allocation_policy {
+          + cluster_ipv4_cidr_block       = (known after apply)
+          + cluster_secondary_range_name  = "k8s-pods-range"
+          + services_ipv4_cidr_block      = (known after apply)
+          + services_secondary_range_name = "k8s-services-range"
+          + stack_type                    = "IPV4"
+        }
+
+      + private_cluster_config {
+          + enable_private_nodes   = true
+          + master_ipv4_cidr_block = "172.16.0.0/28"
+          + peering_name           = (known after apply)
+          + private_endpoint       = (known after apply)
+          + public_endpoint        = (known after apply)
+        }
+
+      + release_channel {
+          + channel = "REGULAR"
+        }
+
+      + workload_identity_config {
+          + workload_pool = "angelic-digit-297517.svc.id.goog"
+        }
+    }
+
+  # google_container_node_pool.general will be created
+  + resource "google_container_node_pool" "general" {
+      + cluster                     = (known after apply)
+      + id                          = (known after apply)
+      + initial_node_count          = (known after apply)
+      + instance_group_urls         = (known after apply)
+      + location                    = (known after apply)
+      + managed_instance_group_urls = (known after apply)
+      + max_pods_per_node           = (known after apply)
+      + name                        = "us-central1-general"
+      + name_prefix                 = (known after apply)
+      + node_count                  = 2
+      + node_locations              = (known after apply)
+      + operation                   = (known after apply)
+      + project                     = (known after apply)
+      + version                     = (known after apply)
+
+      + management {
+          + auto_repair  = true
+          + auto_upgrade = true
+        }
+
+      + node_config {
+          + disk_size_gb      = (known after apply)
+          + disk_type         = (known after apply)
+          + guest_accelerator = (known after apply)
+          + image_type        = (known after apply)
+          + labels            = {
+              + "role" = "us-central1-general"
+            }
+          + local_ssd_count   = (known after apply)
+          + logging_variant   = "DEFAULT"
+          + machine_type      = "e2-small"
+          + metadata          = (known after apply)
+          + min_cpu_platform  = (known after apply)
+          + oauth_scopes      = [
+              + "https://www.googleapis.com/auth/cloud-platform",
+            ]
+          + preemptible       = false
+          + service_account   = "sgune-sa-gke@angelic-digit-297517.iam.gserviceaccount.com"
+          + spot              = false
+          + taint             = (known after apply)
+        }
+    }
+
+  # google_container_node_pool.spot will be created
+  + resource "google_container_node_pool" "spot" {
+      + cluster                     = (known after apply)
+      + id                          = (known after apply)
+      + initial_node_count          = (known after apply)
+      + instance_group_urls         = (known after apply)
+      + location                    = (known after apply)
+      + managed_instance_group_urls = (known after apply)
+      + max_pods_per_node           = (known after apply)
+      + name                        = "us-central1-spot"
+      + name_prefix                 = (known after apply)
+      + node_count                  = (known after apply)
+      + node_locations              = (known after apply)
+      + operation                   = (known after apply)
+      + project                     = (known after apply)
+      + version                     = (known after apply)
+
+      + autoscaling {
+          + location_policy = (known after apply)
+          + max_node_count  = 2
+          + min_node_count  = 1
+        }
+
+      + management {
+          + auto_repair  = true
+          + auto_upgrade = true
+        }
+
+      + node_config {
+          + disk_size_gb      = (known after apply)
+          + disk_type         = (known after apply)
+          + guest_accelerator = (known after apply)
+          + image_type        = (known after apply)
+          + labels            = {
+              + "role" = "us-central1-spot"
+            }
+          + local_ssd_count   = (known after apply)
+          + logging_variant   = "DEFAULT"
+          + machine_type      = "e2-small"
+          + metadata          = (known after apply)
+          + min_cpu_platform  = (known after apply)
+          + oauth_scopes      = [
+              + "https://www.googleapis.com/auth/cloud-platform",
+            ]
+          + preemptible       = true
+          + service_account   = "sgune-sa-gke@angelic-digit-297517.iam.gserviceaccount.com"
+          + spot              = false
+          + taint             = [
+              + {
+                  + effect = "NO_SCHEDULE"
+                  + key    = "instance_type"
+                  + value  = "spot"
+                },
+            ]
+        }
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+```
+</details>
