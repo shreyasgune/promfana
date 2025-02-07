@@ -581,3 +581,19 @@ To remove these messages in the future, please run `snyk config set disableSugge
 Learn more: https://docs.snyk.io/products/snyk-container/getting-around-the-snyk-container-ui/base-image-detection
 ```
 </details>
+
+## Helm
+```
+helm install --dry-run --debug --namespace dotnet-game-api dotnet-game-api ./dotnet-game-api  # dry run
+
+helm upgrade --install --cleanup-on-fail --namespace dotnet-game-api dotnet-game-api -f dotnet-game-api/values/gke.yaml  ./dotnet-game-api
+
+helm diff upgrade --namespace dotnet-game-api dotnet-game-api -f dotnet-game-api/values/gke.yaml  ./dotnet-game-api -C3
+
+#NOTES
+Get the application URL by running these commands: 
+  export POD_NAME=$(kubectl get pods --namespace dotnet-game-api -l "app.kubernetes.io/name=dotnet-game-api" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace dotnet-game-api $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace dotnet-game-api port-forward $POD_NAME 8080:$CONTAINER_PORT
+```
