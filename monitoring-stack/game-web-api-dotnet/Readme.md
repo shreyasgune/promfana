@@ -1,4 +1,4 @@
-# Sample Web Api backend for the Game Web App
+# Sample Web Api backend for the Game
 This is a sample Web Api backend for the Game Web App. It is written in C# using the .NET Core framework.
 
 ## Local Dev
@@ -14,6 +14,14 @@ chmod +x ./dotnet-install.sh
 - Instantiate the project
 ```
 dotnet new webapi -n GameBackend
+```
+
+### Observability Addon
+We want to add the ability to monitor our app, early on in our development cycle.
+
+```
+dotnet add package prometheus-net.AspNetCore
+
 ```
 
 - Create a container and run it locally
@@ -62,19 +70,150 @@ Storing signatures
 
 ```
 
+Image can be found at: https://hub.docker.com/repository/docker/shreyasgune/dotnet-web-api/tags
+Image pull: `docker pull shreyasgune/dotnet-web-api:0.1` or `podman pull shreyasgune/dotnet-web-api:0.1`
+> Note: For production, this will be secured with a private registry, behind firewalls and with proper access control measures.
+
 ### Testing
 ```
+Create Players
 curl -X POST "http://localhost:8080/players" -H "Content-Type: application/json" -d '{"id":1, "name":"Alice", "score":0}'
-
 curl -X POST "http://localhost:8080/players" -H "Content-Type: application/json" -d '{"id":17, "name":"Shreyas", "score":666}'
 
+
+GET all players (do it multiple times, to see the counter increment)
 curl -X GET "http://localhost:8080/players"
 [{"id":1,"name":"Alice","score":0},{"id":17,"name":"Shreyas","score":666}]
 
+GET a specific player via ID
 curl -X GET "http://localhost:8080/players/17"
 {"id":17,"name":"Shreyas","score":666}%
 
+GET player_requests_total counter via metrics endpoint
+curl -s -X GET "http://localhost:8080/metrics" | grep player_requests_total
+# HELP player_requests_total Total number of requests to the players endpoint
+# TYPE player_requests_total counter
+player_requests_total 3
+
 ```
+
+### Metrics Endpoint Sample
+<details>
+<summary> sample output from /metrics </summary>
+
+```
+# HELP player_requests_total Total number of requests to the players endpoint
+# TYPE player_requests_total counter
+player_requests_total 3
+# HELP http_request_duration_seconds The duration of HTTP requests processed by an ASP.NET Core application.
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_sum{code="201",method="POST",controller="",action="",endpoint="/players"} 0.0121344
+http_request_duration_seconds_count{code="201",method="POST",controller="",action="",endpoint="/players"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.001"} 1
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.002"} 1
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.004"} 1
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.008"} 1
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.016"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.032"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.064"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.128"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.256"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="0.512"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="1.024"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="2.048"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="4.096"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="8.192"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="16.384"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="32.768"} 2
+http_request_duration_seconds_bucket{code="201",method="POST",controller="",action="",endpoint="/players",le="+Inf"} 2
+http_request_duration_seconds_sum{code="200",method="GET",controller="",action="",endpoint="/players"} 0.005078
+http_request_duration_seconds_count{code="200",method="GET",controller="",action="",endpoint="/players"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.001"} 2
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.002"} 2
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.004"} 2
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.008"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.016"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.032"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.064"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.128"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.256"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="0.512"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="1.024"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="2.048"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="4.096"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="8.192"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="16.384"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="32.768"} 3
+http_request_duration_seconds_bucket{code="200",method="GET",controller="",action="",endpoint="/players",le="+Inf"} 3
+# HELP http_requests_received_total Provides the count of HTTP requests that have been processed by the ASP.NET Core pipeline.
+# TYPE http_requests_received_total counter
+http_requests_received_total{code="201",method="POST",controller="",action="",endpoint="/players"} 2
+http_requests_received_total{code="200",method="GET",controller="",action="",endpoint="/players"} 3
+# HELP http_requests_in_progress The number of requests currently in progress in the ASP.NET Core pipeline. One series without controller/action label values counts all in-progress requests, with separate series existing for each controller-action pair.
+# TYPE http_requests_in_progress gauge
+http_requests_in_progress{method="POST",controller="",action="",endpoint="/players"} 0
+http_requests_in_progress{method="GET",controller="",action="",endpoint="/players"} 0
+# HELP dotnet_collection_count_total GC collection count
+# TYPE dotnet_collection_count_total counter
+dotnet_collection_count_total{generation="0"} 0
+dotnet_collection_count_total{generation="1"} 0
+dotnet_collection_count_total{generation="2"} 0
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1738948209.306481
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 0.5699999
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 281382707200
+# HELP process_working_set_bytes Process working set
+# TYPE process_working_set_bytes gauge
+process_working_set_bytes 87760896
+# HELP process_private_memory_bytes Process private memory size
+# TYPE process_private_memory_bytes gauge
+process_private_memory_bytes 186691584
+# HELP process_open_handles Number of open handles
+# TYPE process_open_handles gauge
+process_open_handles 233
+# HELP process_num_threads Total number of threads
+# TYPE process_num_threads gauge
+process_num_threads 27
+# HELP dotnet_total_memory_bytes Total known allocated memory
+# TYPE dotnet_total_memory_bytes gauge
+dotnet_total_memory_bytes 2536008
+# HELP prometheus_net_metric_families Number of metric families currently registered.
+# TYPE prometheus_net_metric_families gauge
+prometheus_net_metric_families{metric_type="counter"} 5
+prometheus_net_metric_families{metric_type="gauge"} 13
+prometheus_net_metric_families{metric_type="summary"} 0
+prometheus_net_metric_families{metric_type="histogram"} 1
+# HELP prometheus_net_metric_instances Number of metric instances currently registered across all metric families.
+# TYPE prometheus_net_metric_instances gauge
+prometheus_net_metric_instances{metric_type="counter"} 7
+prometheus_net_metric_instances{metric_type="gauge"} 23
+prometheus_net_metric_instances{metric_type="summary"} 0
+prometheus_net_metric_instances{metric_type="histogram"} 2
+# HELP prometheus_net_metric_timeseries Number of metric timeseries currently generated from all metric instances.
+# TYPE prometheus_net_metric_timeseries gauge
+prometheus_net_metric_timeseries{metric_type="counter"} 7
+prometheus_net_metric_timeseries{metric_type="gauge"} 23
+prometheus_net_metric_timeseries{metric_type="summary"} 0
+prometheus_net_metric_timeseries{metric_type="histogram"} 38
+# HELP prometheus_net_exemplars_recorded_total Number of exemplars that were accepted into in-memory storage in the prometheus-net SDK.
+# TYPE prometheus_net_exemplars_recorded_total counter
+prometheus_net_exemplars_recorded_total 0
+# HELP prometheus_net_eventcounteradapter_sources_connected_total Number of event sources that are currently connected to the adapter.
+# TYPE prometheus_net_eventcounteradapter_sources_connected_total gauge
+prometheus_net_eventcounteradapter_sources_connected_total 4
+# HELP prometheus_net_meteradapter_instruments_connected Number of instruments that are currently connected to the adapter.
+# TYPE prometheus_net_meteradapter_instruments_connected gauge
+prometheus_net_meteradapter_instruments_connected 11
+
+```
+</details>
+
+
 
 ### Security Scanning
 - Set up snyk if you don't have it yet.

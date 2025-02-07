@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -22,8 +23,17 @@ app.MapPost("/players", (Player player) => {
     return Results.Created($"/players/{player.Id}", player);
 });
 
+
+// Sample metric for player request total
+// Creating a counter metric
+var playerRequests = Metrics.CreateCounter("player_requests_total", "Total number of requests to the players endpoint");
+
 // Get all players
-app.MapGet("/players", () => Results.Ok(players));
+app.MapGet("/players", () =>
+{
+    playerRequests.Inc();  // Increment metric count
+    return Results.Ok(players);
+});
 
 // Get a specific player by ID
 app.MapGet("/players/{id}", (int id) => {
@@ -40,6 +50,10 @@ app.MapPut("/players/{id}/score", (int id, int score) => {
     }
     return Results.NotFound();
 });
+
+// Expose metrics so that prometheus can scrape them
+app.UseMetricServer();
+app.UseHttpMetrics();
 
 // Run the app
 app.Run();
