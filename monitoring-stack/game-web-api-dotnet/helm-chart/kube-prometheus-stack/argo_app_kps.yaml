@@ -14,7 +14,7 @@ spec:
     path: 'monitoring-stack/game-web-api-dotnet/helm-chart/kube-prometheus-stack'  # Set the path to the directory containing your manifests
     helm:
       valueFiles:
-        - Values.yaml  # Add any specific values files if needed
+        - values.yaml  # Add any specific values files if needed
         - values/custom-values.yaml
   syncPolicy:
     automated:
