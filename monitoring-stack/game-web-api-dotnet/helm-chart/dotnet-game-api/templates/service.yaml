@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-svc
+  name: {{ .Release.Name }}-dotnet-game-api
   labels:
-    app: {{ .Release.Name }}
+    app: {{ .Release.Name }}-dotnet-game-api
   annotations:
     prometheus.io/scrape: {{ quote .Values.promScrape.scrape }}
     prometheus.io/path: {{ quote .Values.promScrape.path }}
@@ -16,15 +16,15 @@ spec:
       protocol: TCP
       name: web
   selector:
-    app: {{ .Release.Name }}
+    app: {{ .Release.Name }}-dotnet-game-api
 ---
 {{ if eq .Values.svcMon true }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-dotnet-game-api
   labels:
-    app: {{ .Release.Name }}
+    app: {{ .Release.Name }}-dotnet-game-api
 spec:
   endpoints:
   - port: web
@@ -32,5 +32,5 @@ spec:
     interval: 30s
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-dotnet-game-api
 {{ end }}

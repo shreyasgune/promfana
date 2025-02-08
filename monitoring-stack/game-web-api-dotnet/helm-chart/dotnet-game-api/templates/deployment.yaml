@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-dotnet-game-api
   labels:
-    app: {{ .Release.Name }}
+    app: {{ .Release.Name }}-dotnet-game-api
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-dotnet-game-api
   template:
     metadata:
       annotations:
@@ -16,10 +16,10 @@ spec:
         prometheus.io/path: {{ quote .Values.promScrape.path }}
         prometheus.io/port: {{ quote .Values.promScrape.port }}
       labels:
-        app: {{ .Release.Name }}
+        app: {{ .Release.Name }}-dotnet-game-api
     spec:
       containers:
-        - name: {{ .Release.Name }}
+        - name: dotnet-game-api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -37,9 +37,9 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-dotnet-game-api
   labels:
-    app: {{ .Release.Name }}
+    app: {{ .Release.Name }}-dotnet-game-api
 spec:
   podMetricsEndpoints:
     - path: "/metrics"
@@ -47,5 +47,5 @@ spec:
       interval: 30s
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-dotnet-game-api
 {{ end }}
