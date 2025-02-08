@@ -44,10 +44,10 @@ grafana:
 
 
 alertmanager:
-  enabled: true
+  enabled: false
   service:
     enabled: true
-    type: LoadBalancer
+    type: ClusterIP
   alertmanagerSpec:
     replicas: 1
 
