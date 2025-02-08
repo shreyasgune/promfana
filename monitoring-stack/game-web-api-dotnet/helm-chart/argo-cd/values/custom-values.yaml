@@ -1,0 +1,14 @@
+global:
+  domain: argocd.example.com
+
+configs:
+  params:
+    server.insecure: true
+
+server:
+  service:
+    type: LoadBalancer
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true

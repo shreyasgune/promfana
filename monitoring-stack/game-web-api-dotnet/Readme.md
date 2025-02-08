@@ -23,6 +23,15 @@ We want to add the ability to monitor our app, early on in our development cycle
 dotnet add package prometheus-net.AspNetCore
 
 ```
+### Logging
+```
+dotnet add package Serilog.AspNetCore
+dotnet add package Serilog.Sinks.Console
+dotnet add package Serilog.Sinks.File
+dotnet add package Serilog.Sinks.Elasticsearch
+
+```
+
 
 - Create a container and run it locally
 > I'm choosing to use podman instead of docker because 
@@ -79,6 +88,10 @@ Image pull: `docker pull shreyasgune/dotnet-web-api:0.1` or `podman pull shreyas
 Create Players
 curl -X POST "http://localhost:8080/players" -H "Content-Type: application/json" -d '{"id":1, "name":"Alice", "score":0}'
 curl -X POST "http://localhost:8080/players" -H "Content-Type: application/json" -d '{"id":17, "name":"Shreyas", "score":666}'
+
+curl -X POST "http://104.197.194.139:8080/players" -H "Content-Type: application/json" -d '{"id":1, "name":"Markus Toivonen", "score":0}'
+curl -X POST "http://104.197.194.139:8080/players" -H "Content-Type: application/json" -d '{"id":17, "name":"Shreyas", "score":666}'
+
 
 
 GET all players (do it multiple times, to see the counter increment)
@@ -584,9 +597,9 @@ Learn more: https://docs.snyk.io/products/snyk-container/getting-around-the-snyk
 
 ## Helm
 ```
-helm install --dry-run --debug --namespace dotnet-game-api dotnet-game-api ./dotnet-game-api  # dry run
+helm install --dry-run --debug --create-namespace --namespace dotnet-game-api dotnet-game-api ./dotnet-game-api  # dry run
 
-helm upgrade --install --cleanup-on-fail --namespace dotnet-game-api dotnet-game-api -f dotnet-game-api/values/gke.yaml  ./dotnet-game-api
+helm upgrade --install --cleanup-on-fail --create-namespace --namespace dotnet-game-api dotnet-game-api -f dotnet-game-api/values/gke.yaml  ./dotnet-game-api
 
 helm diff upgrade --namespace dotnet-game-api dotnet-game-api -f dotnet-game-api/values/gke.yaml  ./dotnet-game-api -C3
 
@@ -610,70 +623,120 @@ cd /home/sgune/devs/promfana/monitoring-stack/game-web-api-dotnet/kube-infra/dev
 
 ```
  terragrunt plan
-WARN[0000] No double-slash (//) found in source URL /home/sgune/devs/promfana/monitoring-stack/game-web-api-dotnet/kube-infra/modules. Relative paths in downloaded Terraform code may not work.
-
-Initializing the backend...
-
-Successfully configured the backend "gcs"! Terraform will automatically
-use this backend unless the backend configuration changes.
-
-Initializing provider plugins...
-- Finding hashicorp/google versions matching "~> 4.0"...
-- Installing hashicorp/google v4.85.0...
-- Installed hashicorp/google v4.85.0 (signed by HashiCorp)
-
-Terraform has created a lock file .terraform.lock.hcl to record the provider
-selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
-google_project_service.compute: Refreshing state... [id=angelic-digit-297517/compute.googleapis.com]
-google_project_service.container: Refreshing state... [id=angelic-digit-297517/container.googleapis.com]
-google_compute_address.nat: Refreshing state... [id=projects/angelic-digit-297517/regions/us-central1/addresses/nat]
-google_compute_network.main: Refreshing state... [id=projects/angelic-digit-297517/global/networks/us-central1-main]
-google_compute_router.router: Refreshing state... [id=projects/angelic-digit-297517/regions/us-central1/routers/us-central1-router]
-google_compute_subnetwork.private: Refreshing state... [id=projects/angelic-digit-297517/regions/us-central1/subnetworks/us-central1-private]
-google_compute_firewall.allow-ssh: Refreshing state... [id=projects/angelic-digit-297517/global/firewalls/us-central1-allow-ssh]
-google_container_cluster.primary: Refreshing state... [id=projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster]
-google_compute_router_nat.nat: Refreshing state... [id=angelic-digit-297517/us-central1/us-central1-router/us-central1-nat]
-google_container_node_pool.general: Refreshing state... [id=projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster/nodePools/us-central1-general]
-google_container_node_pool.spot: Refreshing state... [id=projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster/nodePools/us-central1-spot]
-
-Note: Objects have changed outside of Terraform
-
-Terraform detected the following changes made outside of Terraform since the
-last "terraform apply" which may have affected this plan:
-
-  # google_container_cluster.primary has been deleted
-  - resource "google_container_cluster" "primary" {
-      - id                          = "projects/angelic-digit-297517/locations/us-central1/clusters/us-central1-dev-cluster" -> null
-        name                        = "us-central1-dev-cluster"
-        # (26 unchanged attributes hidden)
-
-        # (17 unchanged blocks hidden)
-    }
-
-
-Unless you have made equivalent changes to your configuration, or ignored the
-relevant attributes using ignore_changes, the following plan may include
-actions to undo or respond to these changes.
-
-─────────────────────────────────────────────────────────────────────────────
-
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   + create
 
 Terraform will perform the following actions:
+
+  # google_compute_address.nat will be created
+  + resource "google_compute_address" "nat" {
+      + address            = (known after apply)
+      + address_type       = "EXTERNAL"
+      + creation_timestamp = (known after apply)
+      + id                 = (known after apply)
+      + name               = "nat"
+      + network_tier       = "PREMIUM"
+      + prefix_length      = (known after apply)
+      + project            = (known after apply)
+      + purpose            = (known after apply)
+      + region             = "us-central1"
+      + self_link          = (known after apply)
+      + subnetwork         = (known after apply)
+      + users              = (known after apply)
+    }
+
+  # google_compute_firewall.allow-ssh will be created
+  + resource "google_compute_firewall" "allow-ssh" {
+      + creation_timestamp = (known after apply)
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "us-central1-allow-ssh"
+      + network            = "us-central1-main"
+      + priority           = 1000
+      + project            = (known after apply)
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "0.0.0.0/0",
+        ]
+
+      + allow {
+          + ports    = [
+              + "22",
+            ]
+          + protocol = "tcp"
+        }
+    }
+
+  # google_compute_router.router will be created
+  + resource "google_compute_router" "router" {
+      + creation_timestamp = (known after apply)
+      + id                 = (known after apply)
+      + name               = "us-central1-router"
+      + network            = "projects/angelic-digit-297517/global/networks/us-central1-main"
+      + project            = (known after apply)
+      + region             = "us-central1"
+      + self_link          = (known after apply)
+    }
+
+  # google_compute_router_nat.nat will be created
+  + resource "google_compute_router_nat" "nat" {
+      + enable_dynamic_port_allocation      = (known after apply)
+      + enable_endpoint_independent_mapping = true
+      + icmp_idle_timeout_sec               = 30
+      + id                                  = (known after apply)
+      + name                                = "us-central1-nat"
+      + nat_ip_allocate_option              = "AUTO_ONLY"
+      + project                             = (known after apply)
+      + region                              = "us-central1"
+      + router                              = "us-central1-router"
+      + source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
+      + tcp_established_idle_timeout_sec    = 1200
+      + tcp_time_wait_timeout_sec           = 120
+      + tcp_transitory_idle_timeout_sec     = 30
+      + udp_idle_timeout_sec                = 30
+
+      + subnetwork {
+          + name                     = (known after apply)
+          + secondary_ip_range_names = []
+          + source_ip_ranges_to_nat  = [
+              + "ALL_IP_RANGES",
+            ]
+        }
+    }
+
+  # google_compute_subnetwork.private will be created
+  + resource "google_compute_subnetwork" "private" {
+      + creation_timestamp         = (known after apply)
+      + external_ipv6_prefix       = (known after apply)
+      + fingerprint                = (known after apply)
+      + gateway_address            = (known after apply)
+      + id                         = (known after apply)
+      + internal_ipv6_prefix       = (known after apply)
+      + ip_cidr_range              = "10.0.0.0/18"
+      + ipv6_cidr_range            = (known after apply)
+      + name                       = "us-central1-private"
+      + network                    = "projects/angelic-digit-297517/global/networks/us-central1-main"
+      + private_ip_google_access   = true
+      + private_ipv6_google_access = (known after apply)
+      + project                    = (known after apply)
+      + purpose                    = (known after apply)
+      + region                     = "us-central1"
+      + secondary_ip_range         = [
+          + {
+              + ip_cidr_range = "10.48.0.0/14"
+              + range_name    = "k8s-pods-range"
+            },
+          + {
+              + ip_cidr_range = "10.52.0.0/20"
+              + range_name    = "k8s-services-range"
+            },
+        ]
+      + self_link                  = (known after apply)
+      + stack_type                 = (known after apply)
+    }
 
   # google_container_cluster.primary will be created
   + resource "google_container_cluster" "primary" {
@@ -688,7 +751,7 @@ Terraform will perform the following actions:
       + enable_shielded_nodes       = true
       + endpoint                    = (known after apply)
       + id                          = (known after apply)
-      + initial_node_count          = 2
+      + initial_node_count          = 1
       + label_fingerprint           = (known after apply)
       + location                    = "us-central1"
       + logging_service             = "logging.googleapis.com/kubernetes"
@@ -707,7 +770,7 @@ Terraform will perform the following actions:
       + remove_default_node_pool    = true
       + self_link                   = (known after apply)
       + services_ipv4_cidr          = (known after apply)
-      + subnetwork                  = "https://www.googleapis.com/compute/v1/projects/angelic-digit-297517/regions/us-central1/subnetworks/us-central1-private"
+      + subnetwork                  = (known after apply)
       + tpu_ipv4_cidr_block         = (known after apply)
 
       + addons_config {
@@ -755,7 +818,7 @@ Terraform will perform the following actions:
       + max_pods_per_node           = (known after apply)
       + name                        = "us-central1-general"
       + name_prefix                 = (known after apply)
-      + node_count                  = 2
+      + node_count                  = 1
       + node_locations              = (known after apply)
       + operation                   = (known after apply)
       + project                     = (known after apply)
@@ -776,7 +839,7 @@ Terraform will perform the following actions:
             }
           + local_ssd_count   = (known after apply)
           + logging_variant   = "DEFAULT"
-          + machine_type      = "e2-small"
+          + machine_type      = "e2-medium"
           + metadata          = (known after apply)
           + min_cpu_platform  = (known after apply)
           + oauth_scopes      = [
@@ -808,7 +871,7 @@ Terraform will perform the following actions:
 
       + autoscaling {
           + location_policy = (known after apply)
-          + max_node_count  = 2
+          + max_node_count  = 1
           + min_node_count  = 1
         }
 
@@ -827,7 +890,7 @@ Terraform will perform the following actions:
             }
           + local_ssd_count   = (known after apply)
           + logging_variant   = "DEFAULT"
-          + machine_type      = "e2-small"
+          + machine_type      = "e2-medium"
           + metadata          = (known after apply)
           + min_cpu_platform  = (known after apply)
           + oauth_scopes      = [
@@ -846,6 +909,46 @@ Terraform will perform the following actions:
         }
     }
 
-Plan: 3 to add, 0 to change, 0 to destroy.
+Plan: 8 to add, 0 to change, 0 to destroy.
 ```
 </details>
+
+- Access to the cluster
+```
+gcloud container clusters get-credentials us-central1-dev-cluster --region us-central1 --project angelic-digit-297517
+```
+
+### Helm Addons
+```
+ARGOCD
+
+helm repo add argo https://argoproj.github.io/argo-helm
+
+helm pull argo/argo-cd --untar --untardir .
+
+helm upgrade --cleanup-on-fail --install --create-namespace --namespace argocd -f argo-cd/values/custom-values.yaml argo-cd ./argo-cd 
+
+helm diff upgrade --namespace argocd -f argo-cd/values/custom-values.yaml argo-cd ./argo-cd -C3
+
+username:admin
+passowrd:kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.username}" | base64 -d
+
+
+=================
+LOKI
+
+helm upgrade --cleanup-on-fail --install --create-namespace --namespace logging -f loki-stack/values/custom-values.yaml loki-stack ./loki-stack
+
+helm diff upgrade --namespace logging -f loki-stack/values/custom-values.yaml loki-stack ./loki-stack -C3
+
+===================
+KPS
+
+helm install --dry-run --debug --create-namespace --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack  # dry run
+
+helm upgrade --cleanup-on-fail --install --create-namespace --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack
+
+helm diff upgrade --namespace monitoring  kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack -C3
+
+
+```
