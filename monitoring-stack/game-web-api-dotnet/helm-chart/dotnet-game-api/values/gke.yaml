@@ -6,10 +6,10 @@ svcMon: true
 resources:
   requests:
     cpu: 1m
-    memory: 1Mi
+    memory: 20Mi
   limits:
     cpu: 1m
-    memory: 1Mi
+    memory: 20Mi
 
 autoscaling:
   enabled: true
