@@ -3,13 +3,13 @@ service:
 svcMon: true
 
 # # Simulating autoscale
-# resources:
-#   requests:
-#     cpu: 100m  # 10 millicores (0.01 CPU)
-#     memory: 20Mi  # 5 MiB RAM
-#   limits:
-#     cpu: 100m  # 50 millicores (0.05 CPU)
-#     memory: 20Mi  # 5 MiB RAM
+resources:
+  requests:
+    cpu: 400m
+    memory: 5Mi
+  limits:
+    cpu: 400m
+    memory: 5Mi
 
 autoscaling:
   enabled: true
