@@ -931,7 +931,8 @@ helm upgrade --cleanup-on-fail --install --create-namespace --namespace argocd -
 helm diff upgrade --namespace argocd -f argo-cd/values/custom-values.yaml argo-cd ./argo-cd -C3
 
 username:admin
-passowrd:kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.username}" | base64 -d
+passowrd:
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
 
 =================
