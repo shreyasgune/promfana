@@ -2,9 +2,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "dotnet-game-api.fullname" . }}
-  labels:
-    {{- include "dotnet-game-api.labels" . | nindent 4 }}
+  name: dotnet-game-api-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
