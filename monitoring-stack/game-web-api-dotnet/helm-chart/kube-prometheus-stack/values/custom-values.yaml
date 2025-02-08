@@ -18,6 +18,11 @@ prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
+    additionalScrapeConfigs:
+    - job_name: "argocd"
+      metrics_path: "/metrics"
+      static_configs:
+        - targets: ["argocd-metrics.argocd.svc.cluster.local:8083"]
 
 grafana:
   service:
@@ -39,6 +44,17 @@ grafana:
       memory: "100Mi"  # Set memory limit to 100Mi
       cpu: "200m"      # Set CPU limit to avoid excessive usage 
 
+prometheusOperator:
+  admissionWebhooks:
+    annotations:
+        argocd.argoproj.io/hook: PreSync
+        argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    mutatingWebhookConfiguration:
+      annotations:
+        argocd.argoproj.io/hook: PreSync
+    validatingWebhookConfiguration:
+      annotations:
+        argocd.argoproj.io/hook: PreSync
 
 alertmanager:
   enabled: false
@@ -53,3 +69,4 @@ kubeScheduler:
   enabled: false
 kubeControllerManager:
   enabled: false
+
