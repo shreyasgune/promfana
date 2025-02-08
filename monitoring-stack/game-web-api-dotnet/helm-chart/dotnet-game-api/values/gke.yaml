@@ -17,3 +17,5 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 2
   targetMemoryUtilizationPercentage: 2
+
+replicaCount: 1
