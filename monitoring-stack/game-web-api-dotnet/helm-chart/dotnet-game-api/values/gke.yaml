@@ -5,10 +5,10 @@ svcMon: true
 # # Simulating autoscale
 resources:
   requests:
-    cpu: 400m
+    cpu: 40m
     memory: 5Mi
   limits:
-    cpu: 400m
+    cpu: 40m
     memory: 5Mi
 
 autoscaling:
