@@ -5,11 +5,11 @@ svcMon: true
 # Simulating autoscale
 resources:
   requests:
-    cpu: 10m  # 10 millicores (0.01 CPU)
-    memory: 5Mi  # 5 MiB RAM
+    cpu: 100m  # 10 millicores (0.01 CPU)
+    memory: 20Mi  # 5 MiB RAM
   limits:
-    cpu: 10m  # 50 millicores (0.05 CPU)
-    memory: 5Mi  # 5 MiB RAM
+    cpu: 100m  # 50 millicores (0.05 CPU)
+    memory: 20Mi  # 5 MiB RAM
 
 autoscaling:
   enabled: true
