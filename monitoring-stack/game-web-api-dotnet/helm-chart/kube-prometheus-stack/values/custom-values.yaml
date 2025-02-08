@@ -31,9 +31,6 @@ grafana:
       url:  http://loki.logging.svc.cluster.local:3100
       access: proxy
       isDefault: true
-  plugins:
-    enabled:
-      - grafana-loki-datasource 
   resources:
     requests:
       memory: "64Mi"  # Minimum memory request
