@@ -3,16 +3,16 @@ service:
 svcMon: true
 
 # # Simulating autoscale
-resources:
-  requests:
-    cpu: 1m
-    memory: 20Mi
-  limits:
-    cpu: 1m
-    memory: 20Mi
+# resources:
+#   requests:
+#     cpu: 1m
+#     memory: 20Mi
+#   limits:
+#     cpu: 1m
+#     memory: 20Mi
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 2
