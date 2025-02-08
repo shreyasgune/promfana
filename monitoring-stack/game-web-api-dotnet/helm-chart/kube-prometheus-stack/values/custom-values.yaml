@@ -2,7 +2,7 @@
 
 crds:
   enabled: false
-  
+
 prometheus:
   service:
     type: LoadBalancer
@@ -30,7 +30,17 @@ grafana:
       type: loki
       url:  http://loki.logging.svc.cluster.local:3100
       access: proxy
-      isDefault: true 
+      isDefault: true
+  plugins:
+    enabled:
+      - grafana-loki-datasource 
+  resources:
+    requests:
+      memory: "64Mi"  # Minimum memory request
+      cpu: "100m"     # Adjust CPU request as needed
+    limits:
+      memory: "100Mi"  # Set memory limit to 100Mi
+      cpu: "200m"      # Set CPU limit to avoid excessive usage 
 
 
 alertmanager:
