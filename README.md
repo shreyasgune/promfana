@@ -38,6 +38,7 @@ kubectl delete crd podmonitors.monitoring.coreos.com
 kubectl delete crd alertmanagers.monitoring.coreos.com
 kubectl delete crd thanosrulers.monitoring.coreos.com
 
+
 helm delete --purge prometheus
 ```
 

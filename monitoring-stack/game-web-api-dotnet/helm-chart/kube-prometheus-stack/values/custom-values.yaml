@@ -1,4 +1,8 @@
 # Example custom values.yaml for kube-prometheus-stack
+
+crds:
+  enabled: false
+  
 prometheus:
   service:
     type: LoadBalancer

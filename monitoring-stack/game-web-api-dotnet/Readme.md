@@ -945,6 +945,8 @@ helm diff upgrade --namespace logging -f loki-stack/values/custom-values.yaml lo
 ===================
 KPS
 
+helm show crds prometheus-community/kube-prometheus-stack --version "20.0.1"| kubectl apply --server-side=true --overwrite=false --force-conflicts -f -
+
 helm install --dry-run --debug --create-namespace --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack  # dry run
 
 helm upgrade --cleanup-on-fail --install --create-namespace --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack
