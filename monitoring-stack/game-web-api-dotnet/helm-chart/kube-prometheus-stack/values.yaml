@@ -3219,7 +3219,7 @@ prometheus:
 
     ## Port for Prometheus Reloader to listen on
     ##
-    reloaderWebPort: 8080
+    reloaderWebPort: 8085
 
     ## List of IP addresses at which the Prometheus server service is available
     ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
