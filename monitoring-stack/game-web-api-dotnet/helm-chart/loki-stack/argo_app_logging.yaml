@@ -15,7 +15,7 @@ spec:
     helm:
       valueFiles:
         - values.yaml  # Add any specific values files if needed
-        - values/gke.yaml
+        - values/custom-values.yaml
   syncPolicy:
     automated:
       prune: true
