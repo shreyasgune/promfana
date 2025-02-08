@@ -89,8 +89,8 @@ Create Players
 curl -X POST "http://localhost:8080/players" -H "Content-Type: application/json" -d '{"id":1, "name":"Alice", "score":0}'
 curl -X POST "http://localhost:8080/players" -H "Content-Type: application/json" -d '{"id":17, "name":"Shreyas", "score":666}'
 
-curl -X POST "http://104.197.194.139:8080/players" -H "Content-Type: application/json" -d '{"id":1, "name":"Markus Toivonen", "score":0}'
-curl -X POST "http://104.197.194.139:8080/players" -H "Content-Type: application/json" -d '{"id":17, "name":"Shreyas", "score":666}'
+curl -X POST "http://34.46.237.17:8080/players" -H "Content-Type: application/json" -d '{"id":1, "name":"Markus Toivonen", "score":0}'
+curl -X POST "http://34.46.237.17:8080/players" -H "Content-Type: application/json" -d '{"id":17, "name":"Shreyas", "score":666}'
 
 
 
