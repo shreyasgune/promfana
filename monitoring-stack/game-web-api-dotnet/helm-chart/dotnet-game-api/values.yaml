@@ -1,0 +1,69 @@
+# values.yaml
+
+# Default values for dotnet-web-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: shreyasgune/dotnet-web-api
+  tag: 0.2
+  pullPolicy: Always
+
+service:
+  name: dotnet-web-api
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  annotations: {}
+  path: /
+  host: dotnet-web-api.local
+
+
+serviceAccount:
+  create: false
+
+nodeSelector: {}
+
+tolerations: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50
+
+affinity: {}
+
+env:
+  - name: "ENV_VAR_1"
+    value: "value1"
+  - name: "ENV_VAR_2"
+    value: "value2"
+
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+promScrape:
+  scrape: "true"
+  path: "/metrics"
+  port: "8080"
+
+podMon: false
+svcMon: false
+
+replicaCount: 1

@@ -2332,7 +2332,7 @@ prometheusOperator:
   ## Liveness probe for the prometheusOperator deployment
   ##
   livenessProbe:
-    enabled: true
+    enabled: false
     failureThreshold: 3
     initialDelaySeconds: 0
     periodSeconds: 10
@@ -2341,7 +2341,7 @@ prometheusOperator:
   ## Readiness probe for the prometheusOperator deployment
   ##
   readinessProbe:
-    enabled: true
+    enabled: false
     failureThreshold: 3
     initialDelaySeconds: 0
     periodSeconds: 10
@@ -2507,7 +2507,7 @@ prometheusOperator:
       ## Liveness probe
       ##
       livenessProbe:
-        enabled: true
+        enabled: false
         failureThreshold: 3
         initialDelaySeconds: 30
         periodSeconds: 10
@@ -2517,7 +2517,7 @@ prometheusOperator:
       ## Readiness probe
       ##
       readinessProbe:
-        enabled: true
+        enabled: false
         failureThreshold: 3
         initialDelaySeconds: 5
         periodSeconds: 10
@@ -2953,13 +2953,13 @@ prometheusOperator:
     # controlledValues: RequestsAndLimits
 
     # Define the max allowed resources for the pod
-    maxAllowed: {}
-    # cpu: 200m
-    # memory: 100Mi
+    maxAllowed:
+      cpu: 200m
+      memory: 200Mi
     # Define the min allowed resources for the pod
-    minAllowed: {}
-    # cpu: 200m
-    # memory: 100Mi
+    minAllowed:
+      cpu: 200m
+      memory: 200Mi
 
     updatePolicy:
       # Specifies minimal number of replicas which need to be alive for VPA Updater to attempt pod eviction

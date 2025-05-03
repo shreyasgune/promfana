@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dotnet-game-api
+  namespace: argocd
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: dotnet-game-api
+  project: default
+  source:
+    repoURL: 'https://github.com/shreyasgune/promfana.git'
+    targetRevision: 'see_sharp_game_api'
+    path: 'monitoring-stack/game-web-api-dotnet/helm-chart/dotnet-game-api'  # Set the path to the directory containing your manifests
+    helm:
+      valueFiles:
+        - values.yaml  # Add any specific values files if needed
+        - values/gke.yaml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "monitoring-stack", "monitoring-stack", "{C15B0FC3-CE9E-CC69-E501-BF1F1024A1F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "game-web-api-dotnet", "game-web-api-dotnet", "{5B74ED01-E8FD-BD0C-204B-200E6018C702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameBackend", "monitoring-stack\game-web-api-dotnet\GameBackend\GameBackend.csproj", "{285AE206-CC76-61DC-B529-8C40FBBA0BF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{285AE206-CC76-61DC-B529-8C40FBBA0BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{285AE206-CC76-61DC-B529-8C40FBBA0BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{285AE206-CC76-61DC-B529-8C40FBBA0BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{285AE206-CC76-61DC-B529-8C40FBBA0BF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5B74ED01-E8FD-BD0C-204B-200E6018C702} = {C15B0FC3-CE9E-CC69-E501-BF1F1024A1F0}
+		{285AE206-CC76-61DC-B529-8C40FBBA0BF3} = {5B74ED01-E8FD-BD0C-204B-200E6018C702}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {996FDB28-6577-4C7D-80B8-87BB9306011A}
+	EndGlobalSection
+EndGlobal

@@ -9,16 +9,16 @@ loki:
   enabled: true
   isDefault: true
   url: http://{{(include "loki.serviceName" .)}}:{{ .Values.loki.service.port }}
-  readinessProbe:
-    httpGet:
-      path: /ready
-      port: http-metrics
-    initialDelaySeconds: 45
-  livenessProbe:
-    httpGet:
-      path: /ready
-      port: http-metrics
-    initialDelaySeconds: 45
+  # readinessProbe:
+  #   httpGet:
+  #     path: /ready
+  #     port: http-metrics
+  #   initialDelaySeconds: 45
+  # livenessProbe:
+  #   httpGet:
+  #     path: /ready
+  #     port: http-metrics
+  #   initialDelaySeconds: 45
   datasource:
     jsonData: "{}"
     uid: ""
@@ -39,6 +39,7 @@ promtail:
             namespaces:
               names:
                 - gman-go-server
+                - dotnet-game-api
         relabel_configs:
           - action: replace
             source_labels: [__meta_kubernetes_namespace]

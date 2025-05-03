@@ -64,9 +64,9 @@ helm pull prometheus-community/kube-prometheus-stack --untar --untardir .
 
 kubectl create namespace monitoring
 
-helm install --dry-run --debug --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack  # dry run
+helm install --dry-run --debug --create-namespace --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack  # dry run
 
-helm upgrade --cleanup-on-fail --install --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack
+helm upgrade --cleanup-on-fail --install --create-namespace --namespace monitoring kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack
 
 helm diff upgrade --namespace monitoring  kube-prometheus-stack -f kube-prometheus-stack/values/custom-values.yaml ./kube-prometheus-stack -C3
 
@@ -93,7 +93,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 
 helm pull grafana/loki-stack --untar --untardir .
 
-helm upgrade --cleanup-on-fail --install --namespace logging -f loki-stack/values/custom-values.yaml loki-stack ./loki-stack
+helm upgrade --cleanup-on-fail --install --create-namespace --namespace logging -f loki-stack/values/custom-values.yaml loki-stack ./loki-stack
 
 helm diff upgrade --namespace logging -f loki-stack/values/custom-values.yaml loki-stack ./loki-stack -C3
 
@@ -157,3 +157,20 @@ Tempo Configuration is explained here: https://github.com/shreyasgune/grafana-te
 ![](https://i.imgur.com/ErQJyft.png)
 ![](https://i.imgur.com/jtefGfM.png)
 ![](https://i.imgur.com/jqNcdLD.png)
+
+# CI/CD
+## ArgoCD
+```
+
+helm repo add argo https://argoproj.github.io/argo-helm
+
+helm pull argo/argo-cd --untar --untardir .
+
+helm upgrade --cleanup-on-fail --install --create-namespace --namespace argocd -f argo-cd/values/custom-values.yaml argo-cd ./argo-cd 
+
+helm diff upgrade --namespace argocd -f argo-cd/values/custom-values.yaml argo-cd ./argo-cd -C3
+
+username:admin
+passowrd:kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.username}" | base64 -d
+
+```
